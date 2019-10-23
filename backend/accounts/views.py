@@ -1,13 +1,19 @@
 from django.shortcuts import render, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 import json
 
 # Create your views here.
+
+
 def index(request):
     if request.user.is_authenticated:
         return HttpResponse(1)
     else:
         return HttpResponse(0)
 
+
+@csrf_exempt
 def login(request):
     # convert request from binary to plain text
     params = request.body.decode('utf-8')
@@ -21,4 +27,8 @@ def login(request):
     print(username)
     print(password)
 
-    return HttpResponse("Login Page")
+    response_data = {}
+    response_data['username'] = username
+    response_data['password'] = password
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
